@@ -18,6 +18,7 @@ import java.util.List;
 
 import top.anymore.mmweather.R;
 import top.anymore.mmweather.activity.AddCityActivity;
+import top.anymore.mmweather.activity.LocationActivity;
 import top.anymore.mmweather.activity.MainActivity;
 import top.anymore.mmweather.adapter.CityListAdapter;
 import top.anymore.mmweather.entity.CityEntity;
@@ -35,6 +36,7 @@ public class LeftMenuFragment extends Fragment{
     private DataStoreUtil mDataStoreUtil;
     private CityListAdapter mAdapter;
     private MainActivity mainActivity;
+    private Button btn_location;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +54,7 @@ public class LeftMenuFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.content_left,container,false);
         rvCities = (RecyclerView) view.findViewById(R.id.rv_cities);
+        btn_location = (Button) view.findViewById(R.id.btn_location);
         return view;
     }
 
@@ -62,6 +65,13 @@ public class LeftMenuFragment extends Fragment{
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvCities.setLayoutManager(layoutManager);
         rvCities.setAdapter(mAdapter);
+        btn_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), LocationActivity.class);
+                startActivity(intent);
+            }
+        });
     }
     private void register(){
         IntentFilter filter = new IntentFilter();
@@ -84,4 +94,10 @@ public class LeftMenuFragment extends Fragment{
             }
         }
     };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getContext().unregisterReceiver(receiver);
+    }
 }

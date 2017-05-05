@@ -6,24 +6,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
-import com.baidu.location.a.g;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +32,6 @@ import top.anymore.mmweather.entity.CityEntity;
 import top.anymore.mmweather.fragment.ContentFragment;
 import top.anymore.mmweather.fragment.LeftMenuFragment;
 import top.anymore.mmweather.location.LocationUtil;
-import top.anymore.mmweather.logutil.LogUtil;
 import top.anymore.mmweather.sqlite.AllCitiesDataOpenHelper;
 import top.anymore.mmweather.sqlite.DataStoreUtil;
 
@@ -46,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     public ActionBarDrawerToggle mActionBarDrawerToggle;
     public ActionBar mActionBar;
     private DataStoreUtil mDataStoreUtil;
+    private boolean isExit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,4 +166,30 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)){
+            drawer.closeDrawer(GravityCompat.START,true);
+        }else {
+            if (!isExit){
+                Toast.makeText(MainActivity.this,"再按一次返回到桌面",Toast.LENGTH_SHORT).show();
+                isExit = true;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(1500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        isExit = false;
+                    }
+                }).start();
+            }else {
+                finish();
+            }
+        }
+    }
+
 }
