@@ -43,6 +43,7 @@ import top.anymore.mmweather.sqlite.DataStoreUtil;
 public class ContentFragment extends Fragment{
     private static final String testurl = "http://www.any-more.top/weather/weather.json";
     private static final String tag = "ContentFragment";
+    private static final String key = "你的Key";
     private BDLocation mBdLocation;
     private int cityid;
     private String cityname;
@@ -186,13 +187,17 @@ public class ContentFragment extends Fragment{
         });
     }
     private String getURL(int id){
+        //添加一个可用的key，解除下面的注释就可以了
         //根据城市id获取url的逻辑
-
+//        String url = "http://v.juhe.cn/weather/index?format=2&dtype=json&cityname="+id+"&key="+key;
+//        return url;
         return testurl;
     }
     private String getURL(BDLocation location){
+        //添加一个可用的key，解除下面的注释就可以了
         //根据经纬度获取url的逻辑
-
+//        String url = "http://v.juhe.cn/weather/geo?format=2&dtype=json&key="+key+"&lon="+location.getLongitude()+"&lat="+location.getLatitude();
+//        return url;
         return testurl;
 
     }
