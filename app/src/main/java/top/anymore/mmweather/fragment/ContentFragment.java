@@ -1,5 +1,7 @@
 package top.anymore.mmweather.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -151,10 +153,18 @@ public class ContentFragment extends Fragment{
     private void getWeather(){
         String url = "";
         if (mBdLocation != null){
-            url = getURL(mBdLocation);
+            url = getURL(mBdLocation.getLongitude(),mBdLocation.getLatitude());
         }else {
-            url = getURL(mCityEntity.getId());
+            if (mCityEntity.getId() != 0){
+                url = getURL(mCityEntity.getId());
+            }else {
+                SharedPreferences preferences = getContext().getSharedPreferences("location", Context.MODE_PRIVATE);
+                float longitude = preferences.getFloat("longitude",113.559481f);
+                float latitude = preferences.getFloat("latitude",34.839839f);
+                url = getURL(longitude,latitude);
+            }
         }
+        LogUtil.v(tag,"url = "+url);
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -171,11 +181,11 @@ public class ContentFragment extends Fragment{
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
                 WeatherDataEntity entity = mGsonUtil.json2entity(result);
-                if (mBdLocation != null){
-                    mDataStoreUtil.storeWeatherData(0,result);
-                }else {
-                    mDataStoreUtil.storeWeatherData(mCityEntity.getId(),result);
+                LogUtil.v(tag,result);
+                if (entity.getResultcode() != 200){
+                    return;
                 }
+                mDataStoreUtil.storeWeatherData(mCityEntity.getId(),result);
                 cityname = entity.getResult().getToday().getCity();
                 mWeatherAdapter.setTodayWeather(entity.getResult().getToday());
                 futureWeathers.clear();
@@ -193,6 +203,13 @@ public class ContentFragment extends Fragment{
         return url;
 //        return testurl;
     }
+    private String getURL(double longitude, double latitude){
+        //添加一个可用的key，解除下面的注释就可以了
+        //根据城市id获取url的逻辑
+        String url =  "http://v.juhe.cn/weather/geo?format=2&dtype=json&key="+key+"&lon="+longitude+"&lat="+latitude;
+        return url;
+//        return testurl;
+    }
     private String getURL(BDLocation location){
         //添加一个可用的key，解除下面的注释就可以了
         //根据经纬度获取url的逻辑
@@ -203,11 +220,7 @@ public class ContentFragment extends Fragment{
     }
     private void getRecordWeather(){
         WeatherDataEntity entity;
-        if (mBdLocation != null){
-            entity = mDataStoreUtil.getWeatherData(0);
-        }else {
-            entity = mDataStoreUtil.getWeatherData(mCityEntity.getId());
-        }
+        entity = mDataStoreUtil.getWeatherData(mCityEntity.getId());
         if (entity == null){
             return;
         }
@@ -216,5 +229,6 @@ public class ContentFragment extends Fragment{
         futureWeathers.clear();
         futureWeathers.addAll(Arrays.asList(entity.getResult().getFuture()));
         mWeatherAdapter.notifyDataSetChanged();
+//        mainActivity.mActionBar.setTitle(cityname);
     }
 }

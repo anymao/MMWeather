@@ -107,7 +107,7 @@ public class DataStoreUtil {
     }
     public void setDefalutCity(CityEntity cityEntity){
         ContentValues values = new ContentValues();
-        values.put("id",0);
+        values.put("id",cityEntity.getId());
         values.put("province",cityEntity.getProvince());
         values.put("city",cityEntity.getCity());
         values.put("district",cityEntity.getDistrict());

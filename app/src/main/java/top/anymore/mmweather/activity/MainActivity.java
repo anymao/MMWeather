@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -135,6 +136,10 @@ public class MainActivity extends AppCompatActivity {
             String action = intent.getAction();
             if (action.equals(LocationUtil.ACTION_GET_CURRENT_LOCATION)){
                 BDLocation location = intent.getParcelableExtra(LocationUtil.EXTRA_CURRENT_LOCATION);
+                SharedPreferences.Editor editor = getSharedPreferences("location",Context.MODE_PRIVATE).edit();
+                editor.putFloat("longitude", (float) location.getLongitude());
+                editor.putFloat("latitude", (float) location.getLatitude());
+                editor.apply();
                 CityEntity cityEntity = new CityEntity();
                 cityEntity.setId(0);
                 cityEntity.setProvince(location.getProvince());
@@ -148,6 +153,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
